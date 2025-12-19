@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="gray_900">#212121</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_300">#E0E0E0</color>
+    <!-- AQI Levels -->
+    <color name="aqi_good">#2E7D32</color>       <!-- Verde -->
+    <color name="aqi_moderate">#F9A825</color>   <!-- Amarillo -->
+    <color name="aqi_unhealthy_sg">#EF6C00</color> <!-- Naranja -->
+    <color name="aqi_unhealthy">#C62828</color>  <!-- Rojo -->
+    <color name="aqi_very_unhealthy">#6A1B9A</color> <!-- Morado -->
+    <color name="aqi_hazardous">#4A148C</color>  <!-- Púrpura oscuro -->
+
+    <!-- Fondo suave -->
+    <color name="aqi_bg_good">#E8F5E9</color>
+    <color name="aqi_bg_moderate">#FFFDE7</color>
+    <color name="aqi_bg_unhealthy_sg">#FFF3E0</color>
+    <color name="aqi_bg_unhealthy">#FDECEA</color>
+    <color name="aqi_bg_very_unhealthy">#F3E5F5</color>
+    <color name="aqi_bg_hazardous">#EDE7F6</color>
+
 </resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/dashboardRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <!-- Ciudad -->
+        <TextView
+            android:id="@+id/tvCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextTitle"
+            android:text="Ciudad" />
+
+        <!-- Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextSubtitle"
+            android:layout_marginTop="4dp"
+            android:text="Índice de Calidad del Aire" />
+
+        <!-- AQI -->
+        <TextView
+            android:id="@+id/tvAqiValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAQI"
+            android:layout_marginTop="16dp"
+            android:text="--" />
+        <TextView
+            android:id="@+id/tvAqiStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estado"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp" />
+
+        <!-- Separador -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="24dp"
+            android:background="@color/gray_300" />
+
+        <!-- PM2.5 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextSubtitle"
+            android:text="PM2.5 (µg/m³)" />
+
+        <TextView
+            android:id="@+id/tvPm25Value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextValue"
+            android:text="--" />
+
+        <!-- Loading -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
+
+        <!-- Error -->
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>

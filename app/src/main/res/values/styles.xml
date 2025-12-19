@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/gray_900</item>
+    </style>
+
+    <style name="TextSubtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gray_700</item>
+    </style>
+
+    <style name="TextAQI">
+        <item name="android:textSize">56sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextValue">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/gray_900</item>
+    </style>
+</resources>
