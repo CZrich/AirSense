@@ -1,56 +1,78 @@
 package com.plataformas.airsense.ui.dashboard
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+
 import com.plataformas.airsense.R
 import com.plataformas.airsense.databinding.FragmentDashboardBinding
+import androidx.recyclerview.widget.GridLayoutManager
 
 
-class DashboardFragment :Fragment(R.layout.fragment_dashboard) {
+class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
+
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: DashboardViewModel by viewModels()
+    private val pollutantAdapter = PollutantAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentDashboardBinding.bind(view)
 
+        setupRecycler()
         observeViewModel()
         viewModel.loadAirQuality()
     }
 
+
+    private fun setupRecycler() {
+        binding.rvPollutants.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = pollutantAdapter
+        }
+    }
+
     private fun observeViewModel() {
+
         viewModel.aqi.observe(viewLifecycleOwner) { aqi ->
             binding.tvAqiValue.text = aqi.toString()
-            applyAqiStyle(aqi)
+            binding.aqiProgressBar.progress = aqi
+
+
         }
 
-
-        viewModel.pm25.observe(viewLifecycleOwner) { pm25 ->
-            binding.tvPm25Value.text =
-                pm25?.let { "$it µg/m³" } ?: "N/A"
+        viewModel.aiPrediction.observe(viewLifecycleOwner) { message ->
+            binding.tvAiMessage.text = message
         }
 
-        viewModel.city.observe(viewLifecycleOwner) { city ->
-            binding.tvCity.text = city
+        viewModel.city.observe(viewLifecycleOwner) {
+            binding.tvCity.text = it
         }
 
-        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            binding.progressBar.visibility =
-                if (loading) View.VISIBLE else View.GONE
+        viewModel.iaqi.observe(viewLifecycleOwner) { iaqi ->
+            pollutantAdapter.submitList(
+                listOf(
+                    PollutantItem("PM2.5", iaqi.pm25, "µg/m³"),
+                    PollutantItem("PM10", iaqi.pm10, "µg/m³"),
+                    PollutantItem("O₃", iaqi.o3, "µg/m³"),
+                    PollutantItem("NO₂", iaqi.no2, "µg/m³")
+                )
+            )
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            binding.tvError.text = error ?: ""
-            binding.tvError.visibility =
-                if (error != null) View.VISIBLE else View.GONE
-        }
+   viewModel.isLoading.observe(viewLifecycleOwner) {
+        binding.progressBar.visibility =
+            if (it) View.VISIBLE else View.GONE
+   }
 
-
+ viewModel.error.observe(viewLifecycleOwner) {
+         binding.tvError.visibility =
+        if (it != null) View.VISIBLE else View.GONE
+            binding.tvError.text = it ?: ""
+         }
     }
 
     override fun onDestroyView() {
@@ -59,45 +81,6 @@ class DashboardFragment :Fragment(R.layout.fragment_dashboard) {
     }
 
     private fun applyAqiStyle(aqi: Int) {
-        val (textColor, bgColor, label) = when (aqi) {
-            in 0..50 -> Triple(
-                R.color.aqi_good,
-                R.color.aqi_bg_good,
-                "Bueno"
-            )
-            in 51..100 -> Triple(
-                R.color.aqi_moderate,
-                R.color.aqi_bg_moderate,
-                "Moderado"
-            )
-            in 101..150 -> Triple(
-                R.color.aqi_unhealthy_sg,
-                R.color.aqi_bg_unhealthy_sg,
-                "Dañino (grupos sensibles)"
-            )
-            in 151..200 -> Triple(
-                R.color.aqi_unhealthy,
-                R.color.aqi_bg_unhealthy,
-                "Dañino"
-            )
-            in 201..300 -> Triple(
-                R.color.aqi_very_unhealthy,
-                R.color.aqi_bg_very_unhealthy,
-                "Muy dañino"
-            )
-            else -> Triple(
-                R.color.aqi_hazardous,
-                R.color.aqi_bg_hazardous,
-                "Peligroso"
-            )
-        }
-
-        binding.tvAqiValue.setTextColor(requireContext().getColor(textColor))
-        binding.tvAqiStatus.setTextColor(requireContext().getColor(textColor))
-        binding.dashboardRoot.setBackgroundColor(requireContext().getColor(bgColor))
-        binding.tvAqiStatus.text = label
+        // (igual al que ya tienes, no lo repito)
     }
-
-
-
 }

@@ -1,60 +1,53 @@
 package com.plataformas.airsense.ui.map
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.TileOverlayOptions
+import com.google.android.gms.maps.model.UrlTileProvider
 import com.plataformas.airsense.R
+import com.plataformas.airsense.ui.dashboard.DashboardViewModel
+import java.net.URL
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MapFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val viewModel: DashboardViewModel by activityViewModels()
+    private var googleMap: GoogleMap? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_container) as SupportMapFragment?
+            ?: SupportMapFragment.newInstance().also {
+                childFragmentManager.beginTransaction().replace(R.id.map_container, it).commit()
             }
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        map.uiSettings.isZoomControlsEnabled = false
+
+        // Añadir Capa de Calidad del Aire (Tiles)
+        val apiKey = "5f8188b565e2d7b257fda014d07c88586ef6ab87"
+        val tileProvider = object : UrlTileProvider(256, 256) {
+            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL? {
+                return try {
+                    URL("https://tiles.waqi.info/tiles/usepa-aqi/$zoom/$x/$y.png?token=$apiKey")
+                } catch (e: Exception) { null }
+            }
+        }
+        map.addTileOverlay(TileOverlayOptions().tileProvider(tileProvider))
+
+        // Observar la ubicación para mover la cámara
+        viewModel.location.observe(viewLifecycleOwner) { geo ->
+            val pos = LatLng(geo[0], geo[1])
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 10f))
+        }
     }
 }

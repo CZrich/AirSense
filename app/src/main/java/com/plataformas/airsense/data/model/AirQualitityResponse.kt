@@ -44,12 +44,19 @@ data class IAQI(
     @SerializedName("pm10")
     val pm10: ValueWrapper?,
 
+    @SerializedName("o3")
+    val o3: ValueWrapper?,     // ✅
+
+    @SerializedName("no2")
+    val no2: ValueWrapper?,    // ✅
+
     @SerializedName("t")
     val temperature: ValueWrapper?,
 
     @SerializedName("h")
     val humidity: ValueWrapper?
 )
+
 data class ValueWrapper(
     @SerializedName("v")
     val value: Double
