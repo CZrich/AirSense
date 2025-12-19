@@ -31,11 +31,15 @@ class DashboardViewModel : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    fun loadAirQuality() {
+
+    fun loadAirQuality(city: String = "here") {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val response = repository.getAirQuality("here")
+                _error.value = null // Limpiamos errores previos
+
+                // Usamos el parámetro 'city' que puede ser "here" o el nombre de una ciudad real
+                val response = repository.getAirQuality(city)
 
                 if (response.status == "ok") {
                     val data = response.data
@@ -43,20 +47,21 @@ class DashboardViewModel : ViewModel() {
                     _city.value = data.city.name
                     _location.value = data.city.geo
 
+                    // Lógica de predicción basada en los niveles de AQI de la tabla de salud
                     _aiPrediction.value = when {
-                        data.aqi > 150 -> "Niveles críticos. Basado en tu perfil de asma, quédate en casa."
-                        data.aqi > 100 -> "Calidad insalubre. Evita ejercicio intenso fuera."
-                        else -> "Día ideal para salir. Calidad óptima para tu condición."
+                        data.aqi > 150 -> "Niveles críticos. Basado en tu perfil de asma, quédate en casa." // Nivel Rojo/Púrpura
+                        data.aqi > 100 -> "Calidad insalubre. Evita ejercicio intenso fuera." // Nivel Naranja
+                        else -> "Día ideal para salir. Calidad óptima para tu condición." // Nivel Verde/Amarillo
                     }
 
                     _iaqi.value = IAqiUiModel(
-                        pm25 = data.iaqi.pm25?.value,
+                        pm25 = data.iaqi.pm25?.value, // Asegúrate que en tu API sea .v o .value
                         pm10 = data.iaqi.pm10?.value,
                         o3 = data.iaqi.o3?.value,
                         no2 = data.iaqi.no2?.value
                     )
                 } else {
-                    _error.value = "No se pudo obtener datos"
+                    _error.value = "No se encontraron datos para: $city"
                 }
             } catch (e: Exception) {
                 _error.value = "Error de conexión: ${e.message}"

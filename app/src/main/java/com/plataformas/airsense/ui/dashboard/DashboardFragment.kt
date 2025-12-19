@@ -24,9 +24,13 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         setupRecycler()
         observeViewModel()
-        viewModel.loadAirQuality()
-    }
 
+
+        if (viewModel.aqi.value == null) {
+
+            viewModel.loadAirQuality()
+        }
+    }
 
     private fun setupRecycler() {
         binding.rvPollutants.apply {

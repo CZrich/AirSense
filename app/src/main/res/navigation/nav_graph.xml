@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/dashboardFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
 
     <fragment
-        android:id="@+id/dashboardFragment"
+        android:id="@+id/navigation_home"
+        android:name="com.plataformas.airsense.ui.home.HomeFragment"
+        android:label="Inicio"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
         android:name="com.plataformas.airsense.ui.dashboard.DashboardFragment"
-        android:label="Dashboard" />
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.plataformas.airsense.ui.history.HistoryFragment"
+        android:label="Historial"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_info"
+        android:name="com.plataformas.airsense.ui.info.InfoFragment"
+        android:label="Niveles"
+        tools:layout="@layout/fragment_info" />
 </navigation>
