@@ -32,6 +32,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupSearch()
+        // Limpiar el texto del buscador cada vez que entramos a esta pantalla
+        binding.searchCity.setQuery("", false)
+        binding.searchCity.clearFocus()
     }
 
     private fun setupSearch() {

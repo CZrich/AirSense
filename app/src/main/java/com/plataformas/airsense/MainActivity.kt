@@ -20,19 +20,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        // 3. Configurar navegación
-//        val navHostFragment = supportFragmentManager
-//            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        val navController = navHostFragment.navController
-// Por esto (más seguro)
+
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+
 
         navHostFragment?.let {
             val navController = it.navController
             binding.bottomNavigation.setupWithNavController(navController)
+
+            // Agregamos este listener para forzar el regreso manual si falla el automático
+            binding.bottomNavigation.setOnItemSelectedListener { item ->
+                if (item.itemId != navController.currentDestination?.id) {
+                    navController.navigate(item.itemId)
+                }
+                true
+            }
         }
-        // Esto conectará los clics del menú con los fragmentos automáticamente
-        //binding.bottomNavigation.setupWithNavController(navController)
     }
 }
