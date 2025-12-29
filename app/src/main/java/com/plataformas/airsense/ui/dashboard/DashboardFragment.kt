@@ -3,7 +3,9 @@ package com.plataformas.airsense.ui.dashboard
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+
 
 import com.plataformas.airsense.R
 import com.plataformas.airsense.databinding.FragmentDashboardBinding
@@ -15,7 +17,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DashboardViewModel by viewModels()
+    private val viewModel: DashboardViewModel by activityViewModels()
     private val pollutantAdapter = PollutantAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -25,10 +27,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         setupRecycler()
         observeViewModel()
 
-
-        if (viewModel.aqi.value == null) {
-
-            viewModel.loadAirQuality()
+        // Verificamos si la ciudad está vacía Y si no se está cargando nada
+        // Esto evita que "Arica" sobreescriba tu búsqueda de "Quito" o "Lima"
+        if (viewModel.city.value == null && viewModel.isLoading.value != true) {
+            viewModel.loadAirQuality("here")
         }
     }
 

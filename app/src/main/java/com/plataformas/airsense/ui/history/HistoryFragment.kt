@@ -1,60 +1,58 @@
 package com.plataformas.airsense.ui.history
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.plataformas.airsense.R
+import com.plataformas.airsense.databinding.FragmentHistoryBinding
+import com.plataformas.airsense.ui.dashboard.DashboardViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class HistoryFragment : Fragment(R.layout.fragment_history) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HistoryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HistoryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentHistoryBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    // Usamos el mismo ViewModel compartido para obtener los datos de la búsqueda
+    private val viewModel: DashboardViewModel by activityViewModels()
+    private val forecastAdapter = ForecastAdapter()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentHistoryBinding.bind(view)
+
+        setupRecyclerView()
+        observeForecast()
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvHistory.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = forecastAdapter
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false)
+    private fun observeForecast() {
+        // Observamos la lista de pronóstico (PM25 diario) que viene en el JSON
+        viewModel.forecast.observe(viewLifecycleOwner) { forecastList ->
+            if (forecastList.isNullOrEmpty()) {
+                binding.tvEmptyState.visibility = View.VISIBLE
+                forecastAdapter.submitList(emptyList())
+            } else {
+                binding.tvEmptyState.visibility = View.GONE
+                forecastAdapter.submitList(forecastList)
+            }
+        }
+
+        // También podemos mostrar el nombre de la ciudad actual en el historial
+        viewModel.city.observe(viewLifecycleOwner) { cityName ->
+            binding.tvHistoryTitle.text = "Pronóstico para: $cityName"
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HistoryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HistoryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

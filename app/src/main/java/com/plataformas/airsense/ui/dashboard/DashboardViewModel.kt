@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.plataformas.airsense.data.model.ForecastItem
 import com.plataformas.airsense.data.repository.AirQualityRepository
 import kotlinx.coroutines.launch
 
@@ -30,7 +31,9 @@ class DashboardViewModel : ViewModel() {
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
-
+    // Dentro de DashboardViewModel
+    private val _forecast = MutableLiveData<List<ForecastItem>>()
+    val forecast: LiveData<List<ForecastItem>> = _forecast
 
     fun loadAirQuality(city: String = "here") {
         viewModelScope.launch {
@@ -60,6 +63,8 @@ class DashboardViewModel : ViewModel() {
                         o3 = data.iaqi.o3?.value,
                         no2 = data.iaqi.no2?.value
                     )
+                    // Dentro de loadAirQuality, cuando status == "ok"
+                    _forecast.value = data.forecast?.daily?.pm25 ?: emptyList()
                 } else {
                     _error.value = "No se encontraron datos para: $city"
                 }
